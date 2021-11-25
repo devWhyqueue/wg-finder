@@ -4,6 +4,8 @@ from datetime import date, datetime
 
 @dataclass(frozen=True)
 class FlatAd:
+    url: any
+    roommates: int
     uploaded: date
     rent: int
     size: int
@@ -15,3 +17,5 @@ class FlatAd:
 
     def not_advertising(self) -> bool:
         return self.district[-1] != "*"
+
+    # TODO: Add filter for low rents

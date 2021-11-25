@@ -3,6 +3,7 @@ from pathlib import Path
 
 import pkg_resources
 
+from wgfinder.messenger import notify_by_mail
 from wgfinder.scraper import find_shared_flats
 
 logging_config = pkg_resources.resource_filename(__name__, str(Path('config/logging.ini')))
@@ -24,4 +25,6 @@ logging.config.fileConfig(logging_config, disable_existing_loggers=False)
 
 if __name__ == '__main__':
     # cli()
-    find_shared_flats()
+    flat_ads = find_shared_flats()
+    for ad in flat_ads:
+        notify_by_mail(ad, "yannik.queisler@gmail.com")

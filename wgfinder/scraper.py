@@ -25,7 +25,8 @@ def find_shared_flats() -> set[FlatAd]:
         size = cols[4].a.span.text.strip()[:-2]
         district = " ".join(cols[5].a.span.text.strip().split())
         free_from = datetime.strptime(cols[6].a.span.text.strip(), "%d.%m.%Y").date()
-        flat_ads.add(FlatAd(uploaded, rent, size, district, free_from))
+        # TODO: Parse url and roommates
+        flat_ads.add(FlatAd("https://google.com", 4, uploaded, rent, size, district, free_from))
     flat_ads = {ad for ad in flat_ads if ad.uploaded_today() and ad.not_advertising()
                 and ad.free_from.month in range(2, 5)}
     log.debug(pformat(flat_ads))
