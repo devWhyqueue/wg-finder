@@ -32,5 +32,6 @@ def find_shared_flats() -> set[FlatAd]:
     flat_ads = {ad for ad in flat_ads if ad.uploaded_today() and not ad.only_advertising() and not ad.too_cheap()
                 and ad.free_from.month in range(2, 5) and ad not in scraped_flat_ads}
     scraped_flat_ads.update(flat_ads)
-    log.debug(pformat(flat_ads) if len(flat_ads) else "No new flat ad matched search criteria.")
+    log.info(f"Found {len(flat_ads)} new flat ads." if len(flat_ads) else "No new flat ad matched search criteria.")
+    log.debug(pformat(flat_ads))
     return flat_ads
