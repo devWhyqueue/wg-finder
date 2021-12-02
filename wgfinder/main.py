@@ -5,9 +5,6 @@ from time import sleep
 import pkg_resources
 from click import command, option
 
-from wgfinder.messenger import notify_by_mail
-from wgfinder.scraper import find_shared_flats
-
 logging_config = pkg_resources.resource_filename(__name__, str(Path('config/logging.ini')))
 logging.config.fileConfig(logging_config, disable_existing_loggers=False)
 
@@ -15,10 +12,11 @@ logging.config.fileConfig(logging_config, disable_existing_loggers=False)
 @command()
 @option('--mail', required=True)
 def cli(mail):
+    from wgfinder import scraper, messenger
     while True:
-        flat_ads = find_shared_flats()
+        flat_ads = scraper.find_shared_flats()
         for ad in flat_ads:
-            notify_by_mail(ad, mail)
+            messenger.notify_by_mail(ad, mail)
         sleep(60)
 
 

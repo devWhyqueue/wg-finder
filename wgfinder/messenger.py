@@ -10,15 +10,18 @@ log = logging.getLogger(__name__)
 
 
 def notify_by_mail(flat_ad: FlatAd, recipient: str):
-    content = _build_message(flat_ad)
-    mail = Mail(
-        from_email='dev.yannik.queisler@gmail.com',
-        to_emails=recipient,
-        subject='Neue WG verfügbar!',
-        html_content=content)
-    sendgrid_client = SendGridAPIClient(os.environ['SENDGRID_API_KEY'])
-    response = sendgrid_client.send(mail)
-    log.debug(response.status_code)
+    try:
+        content = _build_message(flat_ad)
+        mail = Mail(
+            from_email='dev.yannik.queisler@gmail.com',
+            to_emails=recipient,
+            subject='Neue WG verfügbar!',
+            html_content=content)
+        sendgrid_client = SendGridAPIClient(os.environ['SENDGRID_API_KEY'])
+        sendgrid_client.send(mail)
+        log.info(f"Mail for {flat_ad} successfully sent!")
+    except Exception:
+        log.exception(f"Mail for {flat_ad} could not be sent!")
 
 
 def _build_message(flat_ad: FlatAd) -> str:
