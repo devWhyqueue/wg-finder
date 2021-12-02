@@ -15,7 +15,8 @@ class FlatAd:
     def uploaded_today(self) -> bool:
         return self.uploaded == datetime.today().date()
 
-    def not_advertising(self) -> bool:
-        return self.district[-1] != "*"
+    def only_advertising(self) -> bool:
+        return self.district[-1] == "*"
 
-    # TODO: Add filter for low rents
+    def too_cheap(self) -> bool:
+        return self.rent < 100

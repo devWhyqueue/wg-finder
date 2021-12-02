@@ -12,6 +12,7 @@ WG_GESUCHT_SEARCH_URL = "https://www.wg-gesucht.de/wg-zimmer-in-Berlin.8.0.0.0.h
                         "&wgMxT=4&wgArt%5B%5D=12&wgArt%5B%5D=1&wgArt%5B%5D=11&wgArt%5B%5D=19&wgArt%5B%5D=16&wgArt%5B" \
                         "%5D=15&wgArt%5B%5D=7&wgArt%5B%5D=5&wgArt%5B%5D=13&wgArt%5B%5D=22"
 log = logging.getLogger(__name__)
+scraped_flat_ads = set()
 
 
 def find_shared_flats() -> set[FlatAd]:
@@ -20,14 +21,16 @@ def find_shared_flats() -> set[FlatAd]:
     flat_ads = set()
     for row in page.table.tbody.find_all("tr"):
         cols = row.find_all("td")
+        roommates = len(cols[1].a.span.find_all("img"))
+        url = cols[2].a["href"]
         uploaded = datetime.strptime(cols[2].a.span.text.strip(), "%d.%m.%Y").date()
-        rent = cols[3].a.span.b.text.strip().rstrip("€")
-        size = cols[4].a.span.text.strip()[:-2]
+        rent = int(cols[3].a.span.b.text.strip().rstrip("€"))
+        size = int(cols[4].a.span.text.strip()[:-2])
         district = " ".join(cols[5].a.span.text.strip().split())
         free_from = datetime.strptime(cols[6].a.span.text.strip(), "%d.%m.%Y").date()
-        # TODO: Parse url and roommates
-        flat_ads.add(FlatAd("https://google.com", 4, uploaded, rent, size, district, free_from))
-    flat_ads = {ad for ad in flat_ads if ad.uploaded_today() and ad.not_advertising()
-                and ad.free_from.month in range(2, 5)}
-    log.debug(pformat(flat_ads))
+        flat_ads.add(FlatAd(url, roommates, uploaded, rent, size, district, free_from))
+    flat_ads = {ad for ad in flat_ads if ad.uploaded_today() and not ad.only_advertising() and not ad.too_cheap()
+                and ad.free_from.month in range(2, 5) and ad not in scraped_flat_ads}
+    scraped_flat_ads.update(flat_ads)
+    log.debug(pformat(flat_ads) if len(flat_ads) else "No new flat ad matched search criteria.")
     return flat_ads
