@@ -25,7 +25,7 @@ def notify_by_mail(flat_ad: FlatAd, recipient: str):
 
 
 def _build_message(flat_ad: FlatAd) -> str:
-    template = Path("templates/mail_template.html").read_text(encoding="UTF-8")
+    template = Path("./templates/mail_template.html").read_text(encoding="UTF-8")
     message = template \
         .replace("{ROOMMATES}", str(flat_ad.roommates)) \
         .replace("{RENT}", str(flat_ad.rent)) \
