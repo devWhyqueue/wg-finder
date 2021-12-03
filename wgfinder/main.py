@@ -7,13 +7,14 @@ from click import command, option
 
 logging_config = pkg_resources.resource_filename(__name__, str(Path('config/logging.ini')))
 logging.config.fileConfig(logging_config, disable_existing_loggers=False)
-log = logging.getLogger(__name__)
+log = logging.getLogger("wgfinder.main")
 
 
 @command()
 @option('--mail', required=True)
 def cli(mail):
     from wgfinder import scraper, messenger
+    log.info("Starting to look for flat ads...")
     i = -1
     while True:
         flat_ads = scraper.find_shared_flats()
