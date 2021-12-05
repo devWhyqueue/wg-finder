@@ -17,7 +17,18 @@ scraped_flat_ads = set()
 
 
 def find_shared_flats() -> set[FlatAd]:
-    html = requests.get(f"{WG_GESUCHT_BASE_URL}/{WG_GESUCHT_SEARCH_QUERY}").text
+    try:
+        html = requests.get(f"{WG_GESUCHT_BASE_URL}/{WG_GESUCHT_SEARCH_QUERY}").text
+        flat_ads = _parse_flat_ads(html)
+        scraped_flat_ads.update(flat_ads)
+        log.info(f"Found {len(flat_ads)} new flat ad{'s' if len(flat_ads) > 1 else ''}.") if len(flat_ads) else None
+        log.debug(pformat(flat_ads))
+        return flat_ads
+    except ConnectionError:
+        log.exception(f"Could not connect to server!")
+
+
+def _parse_flat_ads(html: str) -> set[FlatAd]:
     page = BeautifulSoup(html, features="html.parser")
     flat_ads = set()
     for row in page.table.tbody.find_all("tr"):
@@ -30,9 +41,5 @@ def find_shared_flats() -> set[FlatAd]:
         district = " ".join(cols[5].a.span.text.strip().split())
         free_from = datetime.strptime(cols[6].a.span.text.strip(), "%d.%m.%Y").date()
         flat_ads.add(FlatAd(url, roommates, uploaded, rent, size, district, free_from))
-    flat_ads = {ad for ad in flat_ads if ad.uploaded_today() and not ad.only_advertising() and not ad.too_cheap()
-                and ad.free_from.month in range(2, 5) and ad not in scraped_flat_ads}
-    scraped_flat_ads.update(flat_ads)
-    log.info(f"Found {len(flat_ads)} new flat ad{'s' if len(flat_ads) > 1 else ''}.") if len(flat_ads) else None
-    log.debug(pformat(flat_ads))
-    return flat_ads
+    return {ad for ad in flat_ads if ad.uploaded_today() and not ad.only_advertising() and not ad.too_cheap()
+            and ad.free_from.month in range(2, 5) and ad not in scraped_flat_ads}
