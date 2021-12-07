@@ -24,7 +24,7 @@ def find_shared_flats() -> set[FlatAd]:
         log.info(f"Found {len(flat_ads)} new flat ad{'s' if len(flat_ads) > 1 else ''}.") if len(flat_ads) else None
         log.debug(pformat(flat_ads))
         return flat_ads
-    except ConnectionError:
+    except requests.exceptions.ConnectionError:
         log.exception(f"Could not connect to server!")
 
 
