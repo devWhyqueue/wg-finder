@@ -17,15 +17,12 @@ scraped_flat_ads = set()
 
 
 def find_shared_flats() -> set[FlatAd]:
-    try:
-        html = requests.get(f"{WG_GESUCHT_BASE_URL}/{WG_GESUCHT_SEARCH_QUERY}").text
-        flat_ads = _parse_flat_ads(html)
-        scraped_flat_ads.update(flat_ads)
-        log.info(f"Found {len(flat_ads)} new flat ad{'s' if len(flat_ads) > 1 else ''}.") if len(flat_ads) else None
-        log.debug(pformat(flat_ads))
-        return flat_ads
-    except requests.exceptions.ConnectionError:
-        log.exception(f"Could not connect to server!")
+    html = requests.get(f"{WG_GESUCHT_BASE_URL}/{WG_GESUCHT_SEARCH_QUERY}").text
+    flat_ads = _parse_flat_ads(html)
+    scraped_flat_ads.update(flat_ads)
+    log.info(f"Found {len(flat_ads)} new flat ad{'s' if len(flat_ads) > 1 else ''}.") if len(flat_ads) else None
+    log.debug(pformat(flat_ads))
+    return flat_ads
 
 
 def _parse_flat_ads(html: str) -> set[FlatAd]:
