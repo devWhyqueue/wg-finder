@@ -8,10 +8,10 @@ from bs4 import BeautifulSoup
 from wgfinder.models import FlatAd
 
 WG_GESUCHT_BASE_URL = "https://www.wg-gesucht.de"
-WG_GESUCHT_SEARCH_QUERY = "wg-zimmer-in-Berlin.8.0.0.0.html?offer_filter=1&city_id=8&noDeact" \
-                          "=1&dTo=1648677600&categories%5B%5D=0&rent_types%5B%5D=2&sMin=16&rMax=650&wgSea=2&wgMnF=2" \
-                          "&wgMxT=4&wgArt%5B%5D=12&wgArt%5B%5D=1&wgArt%5B%5D=11&wgArt%5B%5D=19&wgArt%5B%5D=16&wgArt" \
-                          "%5B%5D=15&wgArt%5B%5D=7&wgArt%5B%5D=5&wgArt%5B%5D=13&wgArt%5B%5D=22"
+WG_GESUCHT_SEARCH_QUERY = "wg-zimmer-in-Berlin.8.0.0.0.html?offer_filter=1&city_id=8&noDeact=1&dTo" \
+                          "=1648764000&categories%5B%5D=0&rent_types%5B%5D=2&sMin=15&rMax=650&wgSea=2&wgMnF=1&wgMxT=4" \
+                          "&wgArt%5B%5D=12&wgArt%5B%5D=1&wgArt%5B%5D=11&wgArt%5B%5D=19&wgArt%5B%5D=16&wgArt%5B%5D=15" \
+                          "&wgArt%5B%5D=7&wgArt%5B%5D=5&wgArt%5B%5D=13&wgArt%5B%5D=22"
 log = logging.getLogger(__name__)
 scraped_flat_ads = set()
 
