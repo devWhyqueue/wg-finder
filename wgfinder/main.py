@@ -24,6 +24,8 @@ def cli(mail):
                 messenger.notify_by_mail(ad, mail)
         except requests.exceptions.ConnectionError:
             log.error(f"Could not connect to server!")
+        except AttributeError:
+            log.error(f"Could not render page!")
         finally:
             i = _hourly_log(len(scraper.scraped_flat_ads), i)
             sleep(60)
