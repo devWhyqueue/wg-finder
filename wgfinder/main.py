@@ -1,12 +1,11 @@
 import logging.config
-from pathlib import Path
+from importlib.resources import files
 from time import sleep
 
-import pkg_resources
 import requests
 from click import command, option
 
-logging_config = pkg_resources.resource_filename(__name__, str(Path('config/logging.ini')))
+logging_config = str(files('config').joinpath('logging.ini'))
 logging.config.fileConfig(logging_config, disable_existing_loggers=False)
 log = logging.getLogger("wgfinder.main")
 
@@ -14,18 +13,22 @@ log = logging.getLogger("wgfinder.main")
 @command()
 @option('--mail', required=True)
 def cli(mail):
-    from wgfinder import scraper, messenger
+    from wgfinder import scraper, messenger, chatgpt
     log.info("Starting to look for flat ads...")
     i = -1
     while True:
         try:
             flat_ads = scraper.find_shared_flats()
             for ad in flat_ads:
+                ad.desc_summary = chatgpt.summarize_flat_ad(ad.description)
+                ad.response = chatgpt.generate_response(ad.description)
                 messenger.notify_by_mail(ad, mail)
         except requests.exceptions.ConnectionError:
-            log.error(f"Could not connect to server!")
+            log.error("Could not connect to server!")
+            log.debug("Could not connect to server!", exc_info=True)
         except AttributeError:
-            log.error(f"Could not render page!")
+            log.error("Could not render page!")
+            log.debug("Could not render page!", exc_info=True)
         finally:
             i = _hourly_log(len(scraper.scraped_flat_ads), i)
             sleep(60)

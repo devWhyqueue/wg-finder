@@ -1,0 +1,3 @@
+Fasse die folgende WG-Anzeige kurz zusammen:
+
+{DESCRIPTION}

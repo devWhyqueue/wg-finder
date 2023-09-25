@@ -1,22 +1,19 @@
 from dataclasses import dataclass
-from datetime import date, datetime
+from datetime import date
 
 
-@dataclass(frozen=True)
+@dataclass
 class FlatAd:
     url: any
     roommates: int
-    uploaded: date
     rent: int
     size: int
     district: str
     free_from: date
+    description: str
+    desc_summary: str
+    response: str
+    creative_response: str
 
-    def uploaded_today(self) -> bool:
-        return self.uploaded == datetime.today().date()
-
-    def only_advertising(self) -> bool:
-        return self.district[-1] == "*"
-
-    def too_cheap(self) -> bool:
-        return self.rent < 100
+    def __eq__(self, other):
+        return self.url == other.url
