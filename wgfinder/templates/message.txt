@@ -1,0 +1,8 @@
+*{ROOMMATES}er WG mit {SIZE}m² Zimmer in {DISTRICT} ab {FREE_FROM}*
+
+{DESC_SUMMARY}
+
+*Vorschlag für Nachricht*
+{RESPONSE}
+
+{URL}

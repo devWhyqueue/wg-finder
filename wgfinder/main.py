@@ -11,8 +11,8 @@ log = logging.getLogger("wgfinder.main")
 
 
 @command()
-@option('--mail', required=True)
-def cli(mail):
+@option('--phone', required=True)
+def cli(phone):
     from wgfinder import scraper, messenger, chatgpt
     log.info("Starting to look for flat ads...")
     i = -1
@@ -22,7 +22,7 @@ def cli(mail):
             for ad in flat_ads:
                 ad.desc_summary = chatgpt.summarize_flat_ad(ad.description)
                 ad.response = chatgpt.generate_response(ad.description)
-                messenger.notify_by_mail(ad, mail)
+                messenger.notify_by_whatsapp(ad, phone)
         except requests.exceptions.ConnectionError:
             log.error("Could not connect to server!")
             log.debug("Could not connect to server!", exc_info=True)
