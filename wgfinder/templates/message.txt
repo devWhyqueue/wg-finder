@@ -1,4 +1,4 @@
-*{ROOMMATES}er WG mit {SIZE}m² Zimmer in {DISTRICT} ab {FREE_FROM}*
+*{ROOMMATES}er WG mit {SIZE}m² Zimmer für {RENT}€ in {DISTRICT} ab {FREE_FROM}*
 
 {DESC_SUMMARY}
 

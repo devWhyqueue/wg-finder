@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 
+import backoff
 import openai
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -13,22 +14,18 @@ def summarize_flat_ad(flat_description):
 
 
 def generate_response(flat_description):
-    template = (Path(__file__).parent / Path("templates/response_prompt.txt")).read_text(encoding="UTF-8")
-    prompt = template.replace("{DESCRIPTION}", flat_description)
-    return _chat_with_gpt(prompt)
+    system_prompt = (Path(__file__).parent / Path("templates/system_prompt.txt")).read_text(encoding="UTF-8")
+    user_prompt = f"# WG-Inserat\n\n{flat_description}"
+    return _chat_with_gpt(user_prompt, system_prompt, engine="gpt-4")
 
 
-def generate_creative_response(flat_description):
-    template = (Path(__file__).parent / Path("templates/creative_response_prompt.txt")).read_text(encoding="UTF-8")
-    prompt = template.replace("{DESCRIPTION}", flat_description)
-    return _chat_with_gpt(prompt, engine="gpt-4")
-
-
-def _chat_with_gpt(prompt, engine="gpt-3.5-turbo"):
+@backoff.on_exception(backoff.expo, Exception)
+def _chat_with_gpt(user_prompt, system_prompt="", engine="gpt-3.5-turbo"):
     response = openai.ChatCompletion.create(
         model=engine,
         messages=[
-            {"role": "user", "content": prompt},
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt},
         ]
     )
     return response.choices[0].message.content

@@ -1,5 +1,6 @@
 import random
 
+import backoff
 import requests
 
 WEBSHARE_PROXIES = "https://proxy.webshare.io/api/v2/proxy/list/download/nctfxmeignwhovjvfhxsvvefolaqxvnyfematjgc" \
@@ -14,12 +15,13 @@ user_agents = [
 ]
 
 
+@backoff.on_exception(backoff.expo, requests.exceptions.RequestException)
 def requests_get(url):
     global webshare_proxies
     webshare_proxies = webshare_proxies if len(webshare_proxies) else _get_proxies()
     headers = {'User-Agent': random.choice(user_agents)}
-    response = requests.get(url, proxies={"https": random.choice(webshare_proxies)}, headers=headers, timeout=5,
-                            allow_redirects=False)
+    response = requests.get(url, proxies={"https": random.choice(webshare_proxies)}, headers=headers,
+                            timeout=5, allow_redirects=False)
     return requests_get(url) if response.status_code == 302 else response
 
 
