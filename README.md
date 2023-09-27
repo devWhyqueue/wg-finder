@@ -27,10 +27,10 @@ poetry install
 Execute main.py as a background process and log to file:
 
 ```
-nohup python3 wgfinder/main.py --mail {MAIL} >> wgfinder-info.log 2>> wgfinder-error.log &
+nohup python3 wgfinder/main.py --phone {PHONE} >> wgfinder-info.log 2>> wgfinder-error.log &
 ```
 
-But do not forget to set the `SENDGRID_API_KEY` and `OPENAI_API_KEY` first!
+But do not forget to set the `OPENAI_API_KEY` first!
 
 To stop:
 
