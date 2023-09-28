@@ -12,3 +12,6 @@ class FlatAd:
 
     def __eq__(self, other):
         return self.url == other.url
+
+    def __repr__(self):
+        return f"FlatAd(url={self.url})"
