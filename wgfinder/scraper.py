@@ -42,7 +42,7 @@ def _parse_flat_ads(html: str) -> list[FlatAd]:
             size = int(info_divs[0].find_all("b")[1].text.strip()[:-2])
             district = info_divs[1].text.split("|")[1].split(" ")[-2]
             description = _get_flat_description(url)
-            if uploaded_recently and rent > 100:
+            if uploaded_recently and rent > 100 and size < 30:
                 flat_ads.append(FlatAd(url, roommates, rent, size, district, free_from, description))
     return [ad for ad in flat_ads if ad not in scraped_flat_ads]
 
