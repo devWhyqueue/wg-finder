@@ -1,9 +1,9 @@
-import backoff
-import openai
-import os
 from pathlib import Path
 
-openai.api_key = os.getenv("OPENAI_API_KEY")
+import backoff
+from openai import OpenAI
+
+client = OpenAI()
 
 
 def summarize_flat_ad(flat_description):
@@ -20,7 +20,7 @@ def generate_response(flat_description):
 
 @backoff.on_exception(backoff.expo, Exception)
 def _chat_with_gpt(user_prompt, system_prompt="", engine="gpt-3.5-turbo"):
-    response = openai.ChatCompletion.create(
+    response = client.chat.completions.create(
         model=engine,
         messages=[
             {"role": "system", "content": system_prompt},
