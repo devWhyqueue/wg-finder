@@ -1,20 +1,16 @@
 import logging
+from bs4 import BeautifulSoup
 from datetime import datetime
 from pprint import pformat
-
-from bs4 import BeautifulSoup
-
 from wgfinder.models import FlatAd
 from wgfinder.util import requests_get
 
 log = logging.getLogger(__name__)
 WG_GESUCHT_BASE_URL = "https://www.wg-gesucht.de"
-WG_GESUCHT_SEARCH_QUERY = "wg-zimmer-in-Berlin.8.0.1.0.html?user_filter_id=6090274&categories%5B0%5D=0&rent_types%5B0" \
-                          "%5D=2&wgMnF=1&wgMxT=5&wgSea=2&sMin=15&rMax=650&dFr=1696111200&wgAge=25&img_only=1&wgArt=12" \
-                          "%2C1%2C11%2C19%2C16%2C15%2C7%2C5%2C13%2C22&radAdd=Bodestraße&radDis=6000&radLat=52" \
-                          ".518218320448&radLng=13.398499672848&noDeact=1&img=1&city_id=8"
+WG_GESUCHT_SEARCH_QUERY = "wg-zimmer-in-Berlin.8.0.1.0.html?user_filter_id=9808663&categories%5B0%5D=0&city_id=8&dFr=1704110400&dTo=1714564800&exc=2&img=1&img_only=1&noDeact=1&rMax=700&radAdd=Bodestraße&radDis=6000&radLat=52.518218320448&radLng=13.398499672848&rent_types%5B0%5D=2&sMin=15&wgAge=25&wgArt=12%2C1%2C11%2C19%2C16%2C15%2C7%2C5%2C13%2C22&wgMnF=1&wgMxT=5&wgSea=2"
 
 scraped_flat_ads = []
+
 
 def find_shared_flats() -> list[FlatAd]:
     html = requests_get(f"{WG_GESUCHT_BASE_URL}/{WG_GESUCHT_SEARCH_QUERY}").text

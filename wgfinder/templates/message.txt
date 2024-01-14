@@ -2,7 +2,4 @@
 
 {DESC_SUMMARY}
 
-*Vorschlag für Nachricht*
-{RESPONSE}
-
 {URL}

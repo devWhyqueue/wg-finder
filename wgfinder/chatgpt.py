@@ -1,8 +1,7 @@
-import os
-from pathlib import Path
-
 import backoff
 import openai
+import os
+from pathlib import Path
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
@@ -16,7 +15,7 @@ def summarize_flat_ad(flat_description):
 def generate_response(flat_description):
     system_prompt = (Path(__file__).parent / Path("templates/system_prompt.txt")).read_text(encoding="UTF-8")
     user_prompt = f"# WG-Inserat\n\n{flat_description}"
-    return _chat_with_gpt(user_prompt, system_prompt, engine="gpt-4")
+    return _chat_with_gpt(user_prompt, system_prompt, engine="gpt-4-1106-preview")
 
 
 @backoff.on_exception(backoff.expo, Exception)
