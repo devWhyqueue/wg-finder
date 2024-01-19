@@ -2,6 +2,7 @@ import logging
 from datetime import datetime
 from pprint import pformat
 
+import backoff
 from bs4 import BeautifulSoup
 
 from wgfinder.models import FlatAd
@@ -15,6 +16,10 @@ WG_GESUCHT_SEARCH_QUERY = ("wg-zimmer-in-Berlin.8.0.1.0.html?user_filter_id=9808
                            "&wgAge=25&wgArt=12%2C1%2C11%2C19%2C16%2C15%2C7%2C5%2C13%2C22&wgMnF=1&wgMxT=5&wgSea=2")
 
 scraped_flat_ads = []
+
+
+class PageRenderError(Exception):
+    pass
 
 
 def find_shared_flats() -> list[FlatAd]:
@@ -48,10 +53,14 @@ def _parse_flat_ads(html: str) -> list[FlatAd]:
     return [ad for ad in flat_ads if ad not in scraped_flat_ads]
 
 
+@backoff.on_exception(backoff.expo, PageRenderError)
 def _get_flat_description(url):
     details_html = requests_get(url).text
     details_page = BeautifulSoup(details_html, features="html.parser")
-    headline = details_page.select_one(".headline-detailed-view-title").text.strip()
+    headline = details_page.select_one(".headline-detailed-view-title")
+    if not headline:
+        raise PageRenderError("Could not render detail page!")
+    headline_text = headline.text.strip()
     description_divs = details_page.select("div[id^='freitext']")
     description = "\n".join([div.text.strip() for div in description_divs])
-    return f'{headline}\n{description}'
+    return f'{headline_text}\n{description}'
