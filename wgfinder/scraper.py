@@ -11,9 +11,9 @@ from wgfinder.util import requests_get
 log = logging.getLogger(__name__)
 WG_GESUCHT_BASE_URL = "https://www.wg-gesucht.de"
 WG_GESUCHT_SEARCH_QUERY = (
-    "wg-zimmer-in-Hamburg.55.0.1.0.html?user_filter_id=10530950&dFr=1726351200&img=1&ot"
-    "=1210%2C1287%2C1208%2C1192%2C1272%2C1265%2C85021%2C1279%2C1283&rent_types%5B0%5D=0&city_id=55&rMax=650&noDeact=1"
-    "&categories%5B0%5D=0")
+    "wg-zimmer-in-Hamburg.55.0.1.0.html?csrf_token=26b39b12d6af1c295a9b32a1d7475343601f6419"
+    "&offer_filter=1&city_id=55&sort_order=0&noDeact=1&dFr=0&categories%5B%5D=0&rMax=700&ot%5B%5D=1192&ot%5B%5D=1208"
+    "&ot%5B%5D=1210&ot%5B%5D=1265&ot%5B%5D=1272&ot%5B%5D=85021&ot%5B%5D=1279&ot%5B%5D=1283&ot%5B%5D=1287")
 
 scraped_flat_ads = []
 
