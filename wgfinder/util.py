@@ -3,8 +3,8 @@ import random
 import backoff
 import requests
 
-WEBSHARE_PROXIES = "https://proxy.webshare.io/api/v2/proxy/list/download/nctfxmeignwhovjvfhxsvvefolaqxvnyfematjgc" \
-                   "/-/any/username/direct/-/"
+WEBSHARE_PROXIES = ("https://proxy.webshare.io/api/v2/proxy/list/download/owiebmhtlkuzgkodphekgzkftqxgeruyhoayjpmu"
+                    "/-/any/username/direct/-/")
 webshare_proxies = []
 user_agents = [
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',

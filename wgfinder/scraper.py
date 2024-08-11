@@ -10,10 +10,10 @@ from wgfinder.util import requests_get
 
 log = logging.getLogger(__name__)
 WG_GESUCHT_BASE_URL = "https://www.wg-gesucht.de"
-WG_GESUCHT_SEARCH_QUERY = ("wg-zimmer-in-Berlin.8.0.1.0.html?user_filter_id=9808663&categories%5B0%5D=0&city_id=8&dFr"
-                           "=1704110400&dTo=1714564800&exc=2&img=1&img_only=1&noDeact=1&rMax=700&radAdd=Bodestraße"
-                           "&radDis=6000&radLat=52.518218320448&radLng=13.398499672848&rent_types%5B0%5D=2&sMin=15"
-                           "&wgAge=25&wgArt=12%2C1%2C11%2C19%2C16%2C15%2C7%2C5%2C13%2C22&wgMnF=1&wgMxT=5&wgSea=2")
+WG_GESUCHT_SEARCH_QUERY = (
+    "wg-zimmer-in-Hamburg.55.0.1.0.html?user_filter_id=10530950&dFr=1726351200&img=1&ot"
+    "=1210%2C1287%2C1208%2C1192%2C1272%2C1265%2C85021%2C1279%2C1283&rent_types%5B0%5D=0&city_id=55&rMax=650&noDeact=1"
+    "&categories%5B0%5D=0")
 
 scraped_flat_ads = []
 
@@ -41,6 +41,7 @@ def _parse_flat_ads(html: str) -> list[FlatAd]:
         online_since = online_since.text if online_since else ""
         uploaded_recently = any(word in online_since for word in ["Sekunde", "Minute"])
         if "asset_id" not in url and uploaded_recently:  # ignore ads
+            log.debug(f"Found new flat ad: {url}")
             info_divs = printonly_div.find_all("div")
             roommates = int(info_divs[1].text.strip()[0])
             free_from = datetime.strptime(info_divs[2].text.strip(), "Verfügbar: %d.%m.%Y").date()
