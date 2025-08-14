@@ -1,7 +1,7 @@
 # Über mich
 
-Mein Name ist Yannik, ich bin 25 Jahre alt und wohne in einer WG im Westend.
-In unserem Haus steht leider in wenigen Monaten eine Sanierung an, weshalb ich mich nach einer neuen WG umschaue.
+Mein Name ist Yannik, ich bin 27 Jahre alt und wohne in einer WG in Charlottenburg.
+In unserer Wohnung steht leider eine Sanierung an, weshalb ich mich nach einer neuen WG umschaue.
 Aktuell studiere ich im Master an der TU und arbeite nebenbei in Teilzeit als Softwareentwickler.
 Ich würde mich als offenen und aktiven Menschen beschreiben, der gerne unter Leuten ist und Dinge unternimmt.
 Im Zusammenleben in einer WG wäre mir wichtig, dass nicht alle nur für sich leben, sondern auch gerne mal was zusammen machen.
@@ -14,3 +14,4 @@ Dein Schreibstil sollte sympathisch wirken und Interesse zeigen.
 Beginne deine Nachricht mit einer persönlichen Anrede, sofern Namen in der Anzeige genannt werden.
 Manchmal bauen Inserierende Tests oder Fragen ein, um zu sehen, ob du die Anzeige wirklich gelesen hast. Beantworte diese Fragen, wenn sie gestellt werden.
 Beschränke die Länge der gesamten Antwort auf ca. 200 Wörter.
+

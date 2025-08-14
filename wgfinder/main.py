@@ -1,14 +1,18 @@
 import logging.config
 from importlib.resources import files
+from pathlib import Path
 from time import sleep
 
 import requests
 from click import command, option
+from dotenv import load_dotenv
+import os
 
 logging_config = str(files('config').joinpath('logging.ini'))
 logging.config.fileConfig(logging_config, disable_existing_loggers=False)
 log = logging.getLogger("wgfinder.main")
 
+load_dotenv(f"{Path(__file__).parent.parent}/.env")
 
 @command()
 @option('--phone', required=True)

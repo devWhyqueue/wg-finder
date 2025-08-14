@@ -2,9 +2,9 @@ import random
 
 import backoff
 import requests
+import os
 
-WEBSHARE_PROXIES = ("https://proxy.webshare.io/api/v2/proxy/list/download/owiebmhtlkuzgkodphekgzkftqxgeruyhoayjpmu"
-                    "/-/any/username/direct/-/")
+WEBSHARE_PROXIES = os.getenv("WEBSHARE_PROXY_URL")
 webshare_proxies = []
 user_agents = [
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
@@ -23,6 +23,7 @@ def requests_get(url):
     response = requests.get(url, proxies={"https": random.choice(webshare_proxies)}, headers=headers,
                             timeout=5, allow_redirects=False)
     return requests_get(url) if response.status_code == 302 else response
+
 
 
 def _get_proxies() -> list[str]:

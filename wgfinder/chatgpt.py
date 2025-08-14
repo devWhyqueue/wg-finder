@@ -15,11 +15,11 @@ def summarize_flat_ad(flat_description):
 def generate_response(flat_description):
     system_prompt = (Path(__file__).parent / Path("templates/system_prompt.txt")).read_text(encoding="UTF-8")
     user_prompt = f"# WG-Inserat\n\n{flat_description}"
-    return _chat_with_gpt(user_prompt, system_prompt, engine="gpt-4o")
+    return _chat_with_gpt(user_prompt, system_prompt, engine="gpt-5")
 
 
 @backoff.on_exception(backoff.expo, Exception)
-def _chat_with_gpt(user_prompt, system_prompt="", engine="gpt-4o-mini"):
+def _chat_with_gpt(user_prompt, system_prompt="", engine="gpt-5-mini"):
     response = client.chat.completions.create(
         model=engine,
         messages=[
@@ -27,4 +27,5 @@ def _chat_with_gpt(user_prompt, system_prompt="", engine="gpt-4o-mini"):
             {"role": "user", "content": user_prompt},
         ]
     )
+    
     return response.choices[0].message.content
