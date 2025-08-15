@@ -72,10 +72,10 @@ def _parse_flat_ads(html: str) -> list[FlatAd]:
 def _get_flat_description(url):
     details_html = requests_get(url).text
     details_page = BeautifulSoup(details_html, features="html.parser")
-    headline = details_page.select('.detailed-view-title span[class]')[1]
-    if not headline:
+    headline = details_page.select('.detailed-view-title span[class]')
+    if not headline or len(headline) < 2:
         raise PageRenderError("Could not render detail page!")
-    headline_text = headline.text.strip()
+    headline_text = headline[1].text.strip()
     description_divs = details_page.select("div[id^='freitext']")
     description = "\n".join([div.text.strip() for div in description_divs])
     return f"{headline_text}\n{description}"
