@@ -24,8 +24,8 @@ def cli(phone):
         try:
             flat_ads = scraper.find_shared_flats()
             for ad in flat_ads:
-                ad.desc_summary = chatgpt.summarize_flat_ad(ad.description)
-                ad.response = chatgpt.generate_response(ad.description)
+                ad.desc_summary = chatgpt.summarize_flat_ad(ad)
+                ad.response = chatgpt.generate_response(ad)
                 messenger.notify_by_whatsapp(ad, phone)
         except requests.exceptions.ConnectionError:
             log.error("Could not connect to server!")

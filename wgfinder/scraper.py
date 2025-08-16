@@ -18,6 +18,7 @@ WG_GESUCHT_SEARCH_QUERY = (
     "&wgArt%5B%5D=11&wgArt%5B%5D=19&wgArt%5B%5D=16&wgArt%5B%5D=15&wgArt%5B%5D=7&wgArt%5B%5D=5"
     "&wgArt%5B%5D=13&wgArt%5B%5D=22&wgAge=27&exc=2&img_only=1"
 )
+PUBLISHER_BLACKLIST = ["Housing", "Spacest"]
 
 scraped_flat_ads = []
 
@@ -47,10 +48,12 @@ def _parse_flat_ads(html: str) -> list[FlatAd]:
     for div in page.select("#main_content .wgg_card.offer_list_item"):
         printonly_div = div.div.select_one("div .printonly")
         url = f'{WG_GESUCHT_BASE_URL}{printonly_div.a["href"]}'
+        publisher = div.select_one("span.ml5")
         online_since = div.select_one("span[style*='color: #218700;']")
         online_since = online_since.text if online_since else ""
         uploaded_recently = any(word in online_since for word in ["Sekunde", "Minute"])
-        if "asset_id" not in url and uploaded_recently:  # ignore ads
+        # Ignore ads
+        if "asset_id" not in url and not any(word in publisher.text for word in PUBLISHER_BLACKLIST) and uploaded_recently:
             info_divs = printonly_div.find_all("div")
             roommates = int(info_divs[1].text.strip()[0])
             free_from = datetime.strptime(
@@ -63,7 +66,7 @@ def _parse_flat_ads(html: str) -> list[FlatAd]:
             description = _get_flat_description(url)
             if uploaded_recently and rent > 100 and size < 30:
                 flat_ads.append(
-                    FlatAd(url, roommates, rent, size, district, free_from, description)
+                    FlatAd(url, roommates, rent, size, district, free_from, description, publisher)
                 )
     return [ad for ad in flat_ads if ad not in scraped_flat_ads]
 
