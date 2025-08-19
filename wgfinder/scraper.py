@@ -11,12 +11,10 @@ from wgfinder.util import requests_get
 log = logging.getLogger(__name__)
 WG_GESUCHT_BASE_URL = "https://www.wg-gesucht.de"
 WG_GESUCHT_SEARCH_QUERY = (
-    "wg-zimmer-in-Berlin.8.0.1.0.html?csrf_token=92907e4ce05281123e0284dc2e5d4e189ede1a39"
-    "&offer_filter=1&city_id=8&sort_column=0&sort_order=0&noDeact=1&dFr=1754042400&dTo=1761994800"
-    "&radLat=52.518218320448&radLng=13.398499672848&categories%5B%5D=0&rent_types%5B%5D=2&sMin=15"
-    "&rMax=760&radAdd=Bodestra%C3%9Fe&wgSea=2&wgMnF=1&wgMxT=3&wgArt%5B%5D=12&wgArt%5B%5D=1"
-    "&wgArt%5B%5D=11&wgArt%5B%5D=19&wgArt%5B%5D=16&wgArt%5B%5D=15&wgArt%5B%5D=7&wgArt%5B%5D=5"
-    "&wgArt%5B%5D=13&wgArt%5B%5D=22&wgAge=27&exc=2&img_only=1"
+    "wg-zimmer-in-Berlin.8.0.1.0.html?offer_filter=1&city_id=8&noDeact=1&dFr=1748772000"
+    "&dTo=1761994800&sMin=15&rMax=760&wgSea=2&wgMnF=1&wgMxT=3&wgAge=27&img_only=1&exContAds=1"
+    "&wgArt=12,1,11,19,16,15,7,5,13,22&ot=126,85077,132,85079,85080,151,163,85086,165,171,178"
+    ",85094,184,189&categories[]=0&rent_types[]=2&user_filter_id=9808663"
 )
 PUBLISHER_BLACKLIST = ["Housing", "Spacest"]
 
@@ -64,7 +62,7 @@ def _parse_flat_ads(html: str) -> list[FlatAd]:
             )
             district = info_divs[1].text.split("|")[1].split(" ")[-2]
             description = _get_flat_description(url)
-            if uploaded_recently and rent > 100 and size < 30:
+            if uploaded_recently and rent > 100 and size < 40 and len(description) > 500:
                 flat_ads.append(
                     FlatAd(url, roommates, rent, size, district, free_from, description, publisher)
                 )
