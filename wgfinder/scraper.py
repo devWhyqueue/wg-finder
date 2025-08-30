@@ -62,17 +62,24 @@ def _parse_flat_ads(html: str) -> list[FlatAd]:
             )
             district = info_divs[1].text.split("|")[1].split(" ")[-2]
             description = _get_flat_description(url)
-            if uploaded_recently and rent > 100 and size < 40 and len(description) > 500:
+            if description is not None and uploaded_recently and rent > 100 and size < 40 and len(description) > 500:
                 flat_ads.append(
                     FlatAd(url, roommates, rent, size, district, free_from, description, publisher)
                 )
     return [ad for ad in flat_ads if ad not in scraped_flat_ads]
 
 
-@backoff.on_exception(backoff.expo, PageRenderError)
+@backoff.on_exception(backoff.expo, PageRenderError, max_tries=5)
 def _get_flat_description(url):
     details_html = requests_get(url).text
     details_page = BeautifulSoup(details_html, features="html.parser")
+    
+    # Check if ad is deactivated
+    deactivated_element = details_page.select_one("div.alert.alert-without-icon-alt.border-orange")
+    if deactivated_element:
+        log.warning(f"Ad is deactivated and will be skipped: {url}")
+        return None
+    
     headline = details_page.select('.detailed-view-title span[class]')
     if not headline or len(headline) < 2:
         raise PageRenderError("Could not render detail page!")
