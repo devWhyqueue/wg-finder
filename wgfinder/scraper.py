@@ -4,6 +4,7 @@ from pprint import pformat
 
 import backoff
 from bs4 import BeautifulSoup
+import re
 
 from wgfinder.models import FlatAd
 from wgfinder.util import requests_get
@@ -26,6 +27,7 @@ class PageRenderError(Exception):
 
 
 def find_shared_flats() -> list[FlatAd]:
+    """Fetch and parse currently available flat ads from WG-Gesucht."""
     html = requests_get(f"{WG_GESUCHT_BASE_URL}/{WG_GESUCHT_SEARCH_QUERY}").text
     flat_ads = _parse_flat_ads(html)
     scraped_flat_ads.extend(flat_ads)
@@ -53,14 +55,14 @@ def _parse_flat_ads(html: str) -> list[FlatAd]:
         # Ignore ads
         if "asset_id" not in url and not any(word in publisher.text for word in PUBLISHER_BLACKLIST) and uploaded_recently:
             info_divs = printonly_div.find_all("div")
-            roommates = int(info_divs[1].text.strip()[0])
+            info_text = info_divs[1].get_text(" ", strip=True)
+            roommates = int(info_text[0])
             free_from = datetime.strptime(
                 info_divs[2].text.strip(), "Verfügbar: %d.%m.%Y"
             ).date()
             rent = int(info_divs[0].find_all("b")[0].text.split(" ")[0])
-            size = int(info_divs[0].find_all("b")[1].text.strip()[:-2]
-            )
-            district = info_divs[1].text.split("|")[1].split(" ")[-2]
+            size = int(info_divs[0].find_all("b")[1].text.strip()[:-2])
+            district = _extract_district(info_text)
             description = _get_flat_description(url)
             if description is not None and uploaded_recently and rent > 100 and size < 40 and len(description) > 500:
                 flat_ads.append(
@@ -70,7 +72,7 @@ def _parse_flat_ads(html: str) -> list[FlatAd]:
 
 
 @backoff.on_exception(backoff.expo, PageRenderError, max_tries=5)
-def _get_flat_description(url):
+def _get_flat_description(url: str) -> str | None:
     details_html = requests_get(url).text
     details_page = BeautifulSoup(details_html, features="html.parser")
     
@@ -82,8 +84,24 @@ def _get_flat_description(url):
     
     headline = details_page.select('.detailed-view-title span[class]')
     if not headline or len(headline) < 2:
-        raise PageRenderError("Could not render detail page!")
+        raise PageRenderError(f"Could not render detail page: {url}")
     headline_text = headline[1].text.strip()
     description_divs = details_page.select("div[id^='freitext']")
     description = "\n".join([div.text.strip() for div in description_divs])
     return f"{headline_text}\n{description}"
+
+
+def _extract_district(info_text: str) -> str:
+    """Extract district from normalized info text like '2er WG | Berlin Prenzlauer Berg |'"""
+    match = re.search(r"\|\s*Berlin\s+([^|]+?)\s*(?:\||$)", info_text)
+    if match:
+        return match.group(1).strip()
+
+    parts = info_text.split("|")
+    if len(parts) > 1:
+        segment = parts[1].split("|")[0].strip()
+        if segment.startswith("Berlin"):
+            remainder = segment[len("Berlin"):].strip()
+            return remainder
+        return segment
+    return ""
