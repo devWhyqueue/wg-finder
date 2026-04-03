@@ -3,7 +3,11 @@ from pathlib import Path
 import backoff
 from openai import OpenAI
 
-client = OpenAI()
+from wgfinder.app_config import get_required_config
+
+
+def _get_client() -> OpenAI:
+    return OpenAI(api_key=get_required_config("openai", "api_key"))
 
 
 def summarize_flat_ad(flat_ad):
@@ -24,7 +28,7 @@ def generate_response(flat_ad):
 
 @backoff.on_exception(backoff.expo, Exception)
 def _chat_with_gpt(user_prompt, system_prompt="", engine="gpt-5-mini"):
-    response = client.chat.completions.create(
+    response = _get_client().chat.completions.create(
         model=engine,
         messages=[
             {"role": "system", "content": system_prompt},

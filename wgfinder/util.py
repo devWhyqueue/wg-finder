@@ -2,9 +2,9 @@ import random
 
 import backoff
 import requests
-import os
 
-WEBSHARE_PROXIES = os.getenv("WEBSHARE_PROXY_URL")
+from wgfinder.app_config import get_required_config
+
 webshare_proxies = []
 user_agents = [
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
@@ -28,7 +28,8 @@ def requests_get(url):
 
 def _get_proxies() -> list[str]:
     proxies = []
-    for proxy in requests.get(WEBSHARE_PROXIES).text.splitlines():
+    proxy_url = get_required_config("webshare", "proxy_url")
+    for proxy in requests.get(proxy_url).text.splitlines():
         address = proxy.split(":")
         proxies.append(f"http://{address[2]}:{address[3]}@{address[0]}:{address[1]}")
     return proxies

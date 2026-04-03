@@ -1,22 +1,17 @@
 import logging
 from datetime import datetime
 from pprint import pformat
+from urllib.parse import urljoin
 
 import backoff
 from bs4 import BeautifulSoup
 import re
 
+from wgfinder.app_config import get_required_config
 from wgfinder.models import FlatAd
 from wgfinder.util import requests_get
 
 log = logging.getLogger(__name__)
-WG_GESUCHT_BASE_URL = "https://www.wg-gesucht.de"
-WG_GESUCHT_SEARCH_QUERY = (
-    "wg-zimmer-in-Berlin.8.0.1.0.html?offer_filter=1&city_id=8&noDeact=1&dFr=1748772000"
-    "&dTo=1761994800&sMin=15&rMax=760&wgSea=2&wgMnF=1&wgMxT=3&wgAge=27&img_only=1&exContAds=1"
-    "&wgArt=12,1,11,19,16,15,7,5,13,22&ot=126,85077,132,85079,85080,151,163,85086,165,171,178"
-    ",85094,184,189&categories[]=0&rent_types[]=2&user_filter_id=9808663"
-)
 PUBLISHER_BLACKLIST = ["Housing", "Spacest"]
 
 scraped_flat_ads = []
@@ -26,9 +21,15 @@ class PageRenderError(Exception):
     pass
 
 
+def _get_search_url() -> str:
+    base_url = get_required_config("wg_gesucht", "base_url", allow_placeholder=True).rstrip("/")
+    search_query = get_required_config("wg_gesucht", "search_query", allow_placeholder=True).lstrip("/")
+    return f"{base_url}/{search_query}"
+
+
 def find_shared_flats() -> list[FlatAd]:
     """Fetch and parse currently available flat ads from WG-Gesucht."""
-    html = requests_get(f"{WG_GESUCHT_BASE_URL}/{WG_GESUCHT_SEARCH_QUERY}").text
+    html = requests_get(_get_search_url()).text
     flat_ads = _parse_flat_ads(html)
     scraped_flat_ads.extend(flat_ads)
     (
@@ -45,9 +46,10 @@ def find_shared_flats() -> list[FlatAd]:
 def _parse_flat_ads(html: str) -> list[FlatAd]:
     page = BeautifulSoup(html, features="html.parser")
     flat_ads = []
+    base_url = get_required_config("wg_gesucht", "base_url", allow_placeholder=True).rstrip("/")
     for div in page.select("#main_content .wgg_card.offer_list_item"):
         printonly_div = div.div.select_one("div .printonly")
-        url = f'{WG_GESUCHT_BASE_URL}{printonly_div.a["href"]}'
+        url = urljoin(f"{base_url}/", printonly_div.a["href"])
         publisher = div.select_one("span.ml5")
         online_since = div.select_one("span[style*='color: #218700;']")
         online_since = online_since.text if online_since else ""
