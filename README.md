@@ -4,22 +4,14 @@ Defy the odds and find a home in Berlin!
 
 # Prerequisites
 
-- Venv: `python3 -m pip install --user virtualenv`
-- Poetry: `python3 -m pip install poetry`
+- `uv`
 
 # Installation
 
-Create and activate venv:
+Create the virtual environment and install dependencies:
 
 ```
-python3 -m venv .venv
-source .venv/bin/activate
-```
-
-Install dependencies:
-
-```
-poetry install
+uv sync --dev
 ```
 
 # Usage
@@ -37,7 +29,7 @@ api_key = MUST_CHANGE
 Execute main.py as a background process and log to file:
 
 ```
-nohup python3 wgfinder/main.py --phone {PHONE} >> wgfinder-info.log 2>> wgfinder-error.log &
+nohup uv run wgfinder --phone {PHONE} >> wgfinder-info.log 2>> wgfinder-error.log &
 ```
 
 To stop:
