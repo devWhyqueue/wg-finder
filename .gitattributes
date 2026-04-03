@@ -1,0 +1,2 @@
+# Store normalized text in Git and check it out with Unix line endings.
+* text=auto eol=lf
