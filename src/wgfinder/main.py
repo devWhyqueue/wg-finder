@@ -1,5 +1,5 @@
 import logging.config
-from pathlib import Path
+from importlib.resources import as_file, files
 from time import sleep
 
 import requests
@@ -7,8 +7,8 @@ from click import command
 
 from wgfinder import chatgpt, messenger, scraper
 
-logging_config = str(Path(__file__).with_name("config") / "logging.ini")
-logging.config.fileConfig(logging_config, disable_existing_loggers=False)
+with as_file(files("wgfinder").joinpath("config", "logging.ini")) as logging_config:
+    logging.config.fileConfig(logging_config, disable_existing_loggers=False)
 log = logging.getLogger("wgfinder.main")
 
 

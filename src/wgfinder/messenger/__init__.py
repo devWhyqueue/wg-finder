@@ -1,5 +1,5 @@
 import logging
-from pathlib import Path
+from importlib.resources import files
 
 import requests
 
@@ -30,8 +30,10 @@ def _send_telegram_message(text: str) -> None:
 
 def _build_message(flat_ad: FlatAd) -> str:
     template = (
-        Path(__file__).resolve().parent.parent / "templates" / "message.txt"
-    ).read_text(encoding="UTF-8")
+        files("wgfinder")
+        .joinpath("templates", "message.txt")
+        .read_text(encoding="utf-8")
+    )
     message = (
         template.replace("{ROOMMATES}", str(flat_ad.roommates))
         .replace("{RENT}", str(flat_ad.rent))

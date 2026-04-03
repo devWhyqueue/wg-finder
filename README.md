@@ -16,7 +16,7 @@ uv sync --dev
 
 # Usage
 
-Before starting the app, edit [`wgfinder/config/app.ini`](/mnt/d/Git/wg-finder/wgfinder/config/app.ini) and replace all `MUST_CHANGE` values:
+Before starting the app, edit [`src/wgfinder/config/app.ini`](/mnt/d/Git/wg-finder/src/wgfinder/config/app.ini) and replace all `MUST_CHANGE` values:
 
 ```ini
 [webshare]
@@ -24,6 +24,8 @@ proxy_url = MUST_CHANGE
 
 [openai]
 api_key = MUST_CHANGE
+summary_model = gpt-5-mini
+response_model = gpt-5
 
 [telegram]
 bot_token = MUST_CHANGE

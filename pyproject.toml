@@ -6,13 +6,13 @@ readme = "README.md"
 requires-python = ">=3.12"
 authors = [{ name = "Yannik Queisler", email = "dev.yannik.queisler@gmail.com" }]
 dependencies = [
-    "beautifulsoup4>=4.12,<5",
-    "click>=8.1.7,<9",
-    "requests>=2.32,<3",
-    "openai>=1.40,<2",
-    "Flask>=3.0.0,<4",
+    "beautifulsoup4>=4.14.3,<5",
+    "click>=8.3.2,<9",
+    "requests>=2.32.5,<3",
+    "openai>=2.30.0,<3",
+    "Flask>=3.1.3,<4",
     "backoff>=2.2.1,<3",
-    "python-dotenv>=1.1.1,<2",
+    "python-dotenv>=1.2.2,<2",
 ]
 
 [project.scripts]
@@ -20,29 +20,32 @@ wgfinder = "wgfinder.main:cli"
 
 [dependency-groups]
 dev = [
-    "pytest>=8.3,<9",
-    "click>=8.3.1",
+    "pytest>=9.0.2,<10",
     "pyright>=1.1.408",
-    "pysonar>=1.3.0.4086",
-    "pytest-cov>=7.0.0",
+    "pysonar>=1.4.0.4676",
+    "pytest-cov>=7.1.0,<8",
     "pyyaml>=6.0.3",
-    "ruff>=0.14.14",
+    "ruff>=0.15.9,<1",
     "truststore>=0.10.4",
-    "vulture>=2.14",
+    "vulture>=2.16,<3",
 ]
 
 [build-system]
-requires = ["setuptools>=68"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling>=1.27.0"]
+build-backend = "hatchling.build"
 
-[tool.setuptools]
-include-package-data = true
+[tool.hatch.build.targets.wheel]
+packages = ["src/wgfinder"]
 
-[tool.setuptools.packages.find]
-include = ["wgfinder*"]
-
-[tool.setuptools.package-data]
-wgfinder = ["config/*.ini", "templates/*.txt"]
+[tool.hatch.build.targets.sdist]
+include = [
+    "/src/wgfinder",
+    "/tests",
+    "/README.md",
+    "/pyproject.toml",
+    "/pyrightconfig.json",
+]
 
 [tool.pytest.ini_options]
+pythonpath = ["src"]
 addopts = "-s"

@@ -8,3 +8,5 @@ __pycache__/
 coverage.xml
 .coverage
 pyrightconfig.json
+.ruff_cache/
+dist/

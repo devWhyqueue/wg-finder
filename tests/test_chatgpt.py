@@ -1,4 +1,9 @@
+from types import SimpleNamespace
+
+import pytest
+
 from wgfinder import chatgpt
+from wgfinder.models import FlatAd
 
 flat_description = (
     "Hallo ihr Suchenden,\n\n"
@@ -39,9 +44,84 @@ flat_description = (
 )
 
 
-def test_summarize_flat_ad():
-    chatgpt._chat_with_gpt = lambda prompt: "summary"
+def _build_flat_ad() -> FlatAd:
+    return FlatAd(
+        "https://example.com/ad",
+        2,
+        750,
+        24,
+        "Neukoelln",
+        "2026-04-01",
+        flat_description,
+        "Alice",
+    )
 
-    response = chatgpt.summarize_flat_ad(flat_description)
+
+def test_summarize_flat_ad(monkeypatch):
+    monkeypatch.setattr(chatgpt, "_get_model_config", lambda option: "gpt-5-mini")
+    monkeypatch.setattr(chatgpt, "_chat_with_gpt", lambda prompt, *_args, **_kwargs: "summary")
+
+    response = chatgpt.summarize_flat_ad(_build_flat_ad())
 
     assert response == "summary"
+
+
+def test_generate_response_uses_configured_model(monkeypatch):
+    captured = {}
+
+    def fake_chat(user_prompt, system_prompt="", engine="gpt-5-mini"):
+        captured["user_prompt"] = user_prompt
+        captured["system_prompt"] = system_prompt
+        captured["engine"] = engine
+        return "response"
+
+    monkeypatch.setattr(
+        chatgpt,
+        "_get_model_config",
+        lambda option: {
+            "summary_model": "gpt-5-mini",
+            "response_model": "gpt-5",
+        }[option],
+    )
+    monkeypatch.setattr(chatgpt, "_chat_with_gpt", fake_chat)
+
+    response = chatgpt.generate_response(_build_flat_ad())
+
+    assert response == "response"
+    assert captured["engine"] == "gpt-5"
+    assert "# WG-Inserat" in captured["user_prompt"]
+    assert captured["system_prompt"]
+
+
+def test_summarize_flat_ad_uses_configured_model(monkeypatch):
+    captured = {}
+
+    def fake_chat(user_prompt, system_prompt="", engine="gpt-5-mini"):
+        captured["engine"] = engine
+        return "summary"
+
+    monkeypatch.setattr(chatgpt, "_get_model_config", lambda option: "gpt-5-mini")
+    monkeypatch.setattr(chatgpt, "_chat_with_gpt", fake_chat)
+
+    response = chatgpt.summarize_flat_ad(_build_flat_ad())
+
+    assert response == "summary"
+    assert captured["engine"] == "gpt-5-mini"
+
+
+def test_chat_with_gpt_uses_responses_api(monkeypatch):
+    responses = SimpleNamespace(create=lambda **_kwargs: SimpleNamespace(output_text="summary"))
+    monkeypatch.setattr(chatgpt, "_get_client", lambda: SimpleNamespace(responses=responses))
+
+    response = chatgpt._chat_with_gpt("user prompt", "system prompt", "gpt-5-mini")
+
+    assert response == "summary"
+
+
+def test_chat_with_gpt_rejects_empty_response(monkeypatch):
+    responses = SimpleNamespace(create=lambda **_kwargs: SimpleNamespace(output_text=""))
+    monkeypatch.setattr(chatgpt, "_get_client", lambda: SimpleNamespace(responses=responses))
+    raw_chat_with_gpt = getattr(chatgpt._chat_with_gpt, "__wrapped__", chatgpt._chat_with_gpt)
+
+    with pytest.raises(RuntimeError, match="empty"):
+        raw_chat_with_gpt("user prompt")
