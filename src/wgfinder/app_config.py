@@ -19,7 +19,7 @@ SECRET_ENV_VARS = {
 def load_app_config() -> configparser.ConfigParser:
     """Load and cache the application configuration file."""
     load_dotenv()
-    config = configparser.ConfigParser()
+    config = configparser.ConfigParser(interpolation=None)
     config_resource = files("wgfinder").joinpath("config", "app.ini")
     with as_file(config_resource) as app_config_path:
         if not config.read(app_config_path):

@@ -70,7 +70,10 @@ def _parse_flat_ads(html: str) -> list[FlatAd]:
         publisher_text = publisher.get_text(strip=True)
         online_since = div.select_one("span[style*='color: #218700;']")
         online_since = online_since.text if online_since else ""
-        uploaded_recently = any(word in online_since for word in ["Sekunde", "Minute"])
+        uploaded_recently = any(
+            word in online_since
+            for word in ["Sekunde", "Minute"]
+        )
         # Ignore ads
         if (
             "asset_id" not in url
@@ -127,13 +130,36 @@ def _get_flat_description(url: str) -> str | None:
         log.warning(f"Ad is deactivated and will be skipped: {url}")
         return None
 
-    headline = details_page.select(".detailed-view-title span[class]")
-    if not headline or len(headline) < 2:
+    headline_text = _extract_headline_text(details_page)
+    if not headline_text:
         raise PageRenderError(f"Could not render detail page: {url}")
-    headline_text = headline[1].text.strip()
     description_divs = details_page.select("div[id^='freitext']")
     description = "\n".join([div.text.strip() for div in description_divs])
+    if not description:
+        raise PageRenderError(f"Could not render detail page: {url}")
     return f"{headline_text}\n{description}"
+
+
+def _extract_headline_text(details_page: BeautifulSoup) -> str:
+    headline_candidates = details_page.select(".detailed-view-title span[class]")
+    if headline_candidates:
+        for headline in reversed(headline_candidates):
+            headline_text = headline.get_text(strip=True)
+            if headline_text:
+                return headline_text
+
+    headline = details_page.select_one("h1")
+    if headline:
+        headline_text = headline.get_text(strip=True)
+        if headline_text:
+            return headline_text
+
+    title = details_page.select_one("meta[property='og:title']")
+    if not title:
+        return ""
+
+    title_content = title.get("content")
+    return title_content.strip() if isinstance(title_content, str) else ""
 
 
 def _extract_district(info_text: str) -> str:
