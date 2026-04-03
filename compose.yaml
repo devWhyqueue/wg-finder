@@ -1,0 +1,11 @@
+services:
+  wgfinder:
+    build:
+      context: .
+    image: wgfinder:latest
+    restart: unless-stopped
+    environment:
+      WEBSHARE_PROXY_URL: ${WEBSHARE_PROXY_URL}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+      TELEGRAM_CHAT_ID: ${TELEGRAM_CHAT_ID}

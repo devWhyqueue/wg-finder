@@ -40,3 +40,27 @@ To stop:
 ```
 pkill -f wgfinder
 ```
+
+# Docker
+
+Build the image:
+
+```bash
+docker build -t wgfinder .
+```
+
+Run the container in the foreground:
+
+```bash
+docker run --rm \
+  --env-file .env \
+  wgfinder
+```
+
+Use Docker Compose for the long-running service:
+
+```bash
+docker compose up -d
+docker compose logs -f
+docker compose down
+```
