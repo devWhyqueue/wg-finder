@@ -16,23 +16,18 @@ uv sync --dev
 
 # Usage
 
-Before starting the app, edit [`src/wgfinder/config/app.ini`](/mnt/d/Git/wg-finder/src/wgfinder/config/app.ini) and replace all `MUST_CHANGE` values:
+Before starting the app, set the secret values in [`.env`](/mnt/d/Git/wg-finder/.env) and keep the non-secret defaults in [`src/wgfinder/config/app.ini`](/mnt/d/Git/wg-finder/src/wgfinder/config/app.ini):
 
-```ini
-[webshare]
-proxy_url = MUST_CHANGE
-
-[openai]
-api_key = MUST_CHANGE
-summary_model = gpt-5-mini
-response_model = gpt-5
-
-[telegram]
-bot_token = MUST_CHANGE
-chat_id = MUST_CHANGE
+```dotenv
+WEBSHARE_PROXY_URL=MUST_CHANGE
+OPENAI_API_KEY=MUST_CHANGE
+TELEGRAM_BOT_TOKEN=MUST_CHANGE
+TELEGRAM_CHAT_ID=MUST_CHANGE
 ```
 
-Create a Telegram bot with BotFather, copy the bot token into `bot_token`, start a chat with that bot, and set `chat_id` to the target chat you want to receive notifications in.
+`app.ini` still controls non-secret settings such as the WG-Gesucht query and the OpenAI model names.
+
+Create a Telegram bot with BotFather, copy the bot token into `TELEGRAM_BOT_TOKEN`, start a chat with that bot, and set `TELEGRAM_CHAT_ID` to the target chat you want to receive notifications in.
 
 Execute main.py as a background process and log to file:
 

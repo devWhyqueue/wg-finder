@@ -69,19 +69,27 @@ def test_notify_by_telegram_raises_for_http_errors(monkeypatch):
 def test_get_required_config_rejects_missing_telegram_chat_id(monkeypatch):
     config = configparser.ConfigParser()
     config["telegram"] = {"bot_token": "bot-token"}
+    monkeypatch.delenv("TELEGRAM_CHAT_ID", raising=False)
+    monkeypatch.setattr(app_config, "load_dotenv", lambda: None)
     monkeypatch.setattr(app_config, "load_app_config", lambda: config)
 
     with pytest.raises(RuntimeError, match="telegram.chat_id"):
         app_config.get_required_config("telegram", "chat_id")
 
 
-def test_get_required_config_rejects_placeholder_telegram_bot_token(monkeypatch):
+def test_get_required_config_reads_telegram_bot_token_from_env(monkeypatch):
     config = configparser.ConfigParser()
-    config["telegram"] = {
-        "bot_token": "MUST_CHANGE",
-        "chat_id": "123456",
-    }
+    config["telegram"] = {"chat_id": "123456"}
+    monkeypatch.setenv("TELEGRAM_BOT_TOKEN", "bot-token")
     monkeypatch.setattr(app_config, "load_app_config", lambda: config)
+
+    assert app_config.get_required_config("telegram", "bot_token") == "bot-token"
+
+
+def test_get_required_config_rejects_placeholder_telegram_bot_token_in_env(
+    monkeypatch,
+):
+    monkeypatch.setenv("TELEGRAM_BOT_TOKEN", "MUST_CHANGE")
 
     with pytest.raises(RuntimeError, match="telegram.bot_token"):
         app_config.get_required_config("telegram", "bot_token")

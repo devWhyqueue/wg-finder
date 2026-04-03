@@ -10,3 +10,4 @@ def test_version():
 def test_package_resources_are_available():
     assert files("wgfinder").joinpath("templates", "message.txt").is_file()
     assert files("wgfinder").joinpath("config", "logging.ini").is_file()
+    assert files("wgfinder").joinpath("config", "system_prompt.txt").is_file()

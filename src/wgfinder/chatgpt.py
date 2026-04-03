@@ -26,7 +26,7 @@ def summarize_flat_ad(flat_ad: FlatAd | str) -> str:
 
 def generate_response(flat_ad: FlatAd) -> str:
     """Generate an application message for a flat listing."""
-    system_prompt = _load_template("system_prompt.txt")
+    system_prompt = _load_config_text("system_prompt.txt")
     user_prompt = f"# WG-Inserat\n\n{flat_ad.to_string()}"
     return _chat_with_gpt(
         user_prompt,
@@ -56,3 +56,7 @@ def _load_template(template_name: str) -> str:
         .joinpath("templates", template_name)
         .read_text(encoding="utf-8")
     )
+
+
+def _load_config_text(file_name: str) -> str:
+    return files("wgfinder").joinpath("config", file_name).read_text(encoding="utf-8")

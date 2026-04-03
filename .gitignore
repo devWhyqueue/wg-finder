@@ -10,3 +10,4 @@ coverage.xml
 pyrightconfig.json
 .ruff_cache/
 dist/
+.env
