@@ -3,16 +3,18 @@ from pathlib import Path
 from time import sleep
 
 import requests
-from click import command, option
+from click import command
+
+from wgfinder import chatgpt, messenger, scraper
 
 logging_config = str(Path(__file__).with_name("config") / "logging.ini")
 logging.config.fileConfig(logging_config, disable_existing_loggers=False)
 log = logging.getLogger("wgfinder.main")
 
+
 @command()
-@option('--phone', required=True)
-def cli(phone):
-    from wgfinder import scraper, messenger, chatgpt
+def cli() -> None:
+    """Continuously poll WG-Gesucht and send matching ads to Telegram."""
     log.info("Starting to look for flat ads...")
     i = -1
     while True:
@@ -21,7 +23,7 @@ def cli(phone):
             for ad in flat_ads:
                 ad.desc_summary = chatgpt.summarize_flat_ad(ad)
                 ad.response = chatgpt.generate_response(ad)
-                messenger.notify_by_whatsapp(ad, phone)
+                messenger.notify_by_telegram(ad)
         except requests.exceptions.ConnectionError:
             log.error("Could not connect to server!")
             log.debug("Could not connect to server!", exc_info=True)
@@ -41,5 +43,5 @@ def _hourly_log(flat_ads: int, i: int) -> int:
     return i
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     cli()

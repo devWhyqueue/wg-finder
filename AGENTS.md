@@ -1,0 +1,1 @@
+- Run skill clean code --minimal after feature implementation

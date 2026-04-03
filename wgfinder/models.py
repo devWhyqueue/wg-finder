@@ -19,7 +19,8 @@ class FlatAd:
     def __repr__(self):
         return f"FlatAd(url={self.url})"
 
-    def to_string(self):
+    def to_string(self) -> str:
+        """Return a readable single-string representation of the listing."""
         return (
             f"FlatAd(url={self.url}, roommates={self.roommates}, "
             f"rent={self.rent}, size={self.size}, district={self.district}, "

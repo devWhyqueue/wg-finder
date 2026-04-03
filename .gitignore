@@ -5,3 +5,6 @@ PyWhatKit_DB.txt
 *egg-info/
 .pytest_cache/
 __pycache__/
+coverage.xml
+.coverage
+pyrightconfig.json

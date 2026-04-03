@@ -1,4 +1,4 @@
-from wgfinder.chatgpt import summarize_flat_ad
+from wgfinder import chatgpt
 
 flat_description = (
     "Hallo ihr Suchenden,\n\n"
@@ -40,5 +40,8 @@ flat_description = (
 
 
 def test_summarize_flat_ad():
-    response = summarize_flat_ad(flat_description)
-    print(response)
+    chatgpt._chat_with_gpt = lambda prompt: "summary"
+
+    response = chatgpt.summarize_flat_ad(flat_description)
+
+    assert response == "summary"
